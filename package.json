@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cheerio": "*",
+    "pretty": "^2.0.0"
+  },
+  "name": "modis_download",
+  "description": "Project to scrape page with list of files and download only those that meet filter criteria",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivominic/modis_download.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivominic/modis_download/issues"
+  },
+  "homepage": "https://github.com/ivominic/modis_download#readme"
+}
