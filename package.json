@@ -1,8 +1,7 @@
 {
   "dependencies": {
     "axios": "^0.27.2",
-    "cheerio": "*",
-    "pretty": "^2.0.0"
+    "cheerio": "*"
   },
   "name": "modis_download",
   "description": "Project to scrape page with list of files and download only those that meet filter criteria",
