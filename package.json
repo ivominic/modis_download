@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "axios": "^0.27.2",
-    "cheerio": "*"
+    "cheerio": "*",
+    "gdal-async": "^3.6.2"
   },
   "name": "modis_download",
   "description": "Project to scrape page with list of files and download only those that meet filter criteria",
