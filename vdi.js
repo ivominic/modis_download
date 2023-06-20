@@ -25,11 +25,6 @@ const downloadModisFolder = "C:/Users/PC/Desktop/modis/ndii/";
 let urlModis = "https://e4ftl01.cr.usgs.gov/MOLT/MOD09GA.061/";
 let originalModisFilename = "";
 
-//TODO: Check if file is already downloaded.
-//TODO: Create path regarding selected date.
-//TODO: Rename file by format that JICA sent.
-//TODO: Log result of the action.
-
 async function scrapeData(url) {
   try {
     const { data } = await axios.get(url);
@@ -46,7 +41,6 @@ async function scrapeData(url) {
     if (blnExistFile) {
       console.log("URL: ", fileUrl);
       await downloadFile(fileUrl, token, downloadFolder + originalFilename);
-      await getLatestModis09A1();
     }
   } catch (err) {
     //console.error("Error", err);
@@ -64,6 +58,7 @@ async function downloadFile(url, token, filePath) {
       console.log(`stdout: ${stdout}`);
       console.log(`stderr: ${stderr}`);
     });
+    await getLatestModis09A1();
   }
 }
 
@@ -73,7 +68,7 @@ iterateDates();
 async function iterateDates() {
   let loop = new Date();
   while (!blnExistFile) {
-    vdiFileName = `${formatDate(loop)}`.replaceAll(".", "");
+    vdiFileName = `tif${formatDate(loop)}`.replaceAll(".", "");
     console.log("Date", formatDate(loop));
     await scrapeData(url + formatDate(loop) + "/");
 
@@ -153,19 +148,10 @@ async function convertToTiff() {
     }
   });
 
-  setTimeout(importTiffToPostgis, 20000);
+  setTimeout(importTiffToPostgis, 60000);
 }
 
 async function importTiffToPostgis() {
-  console.log("START IMPORTING TO PostGIS");
-  let command = `raster2pgsql -F -I -C -t 4800x4800  ${downloadFolder}tif/${vdiFileName}.tif modisvdm.${vdiFileName} | psql postgresql://${pgUserName}:${pgPassword}@localhost:5432/nffis`;
-  exec(command, (err, stdout, stderr) => {
-    if (err) {
-      console.log("ERROR", err);
-      return;
-    }
-  });
-
   let commandNdii2 = `raster2pgsql -F -I -C -t 2400x2400  ${downloadModisFolder}tif/${ndiiFileNameB2}.tif modisvdm.${ndiiFileNameB2} | psql ${pgUserName}://${pgPassword}:postgres@localhost:5432/nffis`;
   exec(commandNdii2, (err, stdout, stderr) => {
     if (err) {
@@ -174,8 +160,16 @@ async function importTiffToPostgis() {
     }
   });
 
-  let commandNdii6 = `raster2pgsql -F -I -C -s 2400x2400  ${downloadModisFolder}tif/${ndiiFileNameB6}.tif modisvdm.${ndiiFileNameB6} | psql ${pgUserName}://${pgPassword}:postgres@localhost:5432/nffis`;
+  let commandNdii6 = `raster2pgsql -F -I -C -t 2400x2400  ${downloadModisFolder}tif/${ndiiFileNameB6}.tif modisvdm.${ndiiFileNameB6} | psql ${pgUserName}://${pgPassword}:postgres@localhost:5432/nffis`;
   exec(commandNdii6, (err, stdout, stderr) => {
+    if (err) {
+      console.log("ERROR", err);
+      return;
+    }
+  });
+
+  let command = `raster2pgsql -F -I -C -t 4800x4800  ${downloadFolder}tif/${vdiFileName}.tif modisvdm.${vdiFileName} | psql postgresql://${pgUserName}:${pgPassword}@localhost:5432/nffis`;
+  exec(command, (err, stdout, stderr) => {
     if (err) {
       console.log("ERROR", err);
       return;
